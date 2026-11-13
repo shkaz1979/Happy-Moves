@@ -9,9 +9,7 @@
     :root {
       --bg: #f1f5f9;
       --dark: #090d16;
-      --dark-card: #131b2e;
       --primary: #008751;
-      --primary-hover: #006b40;
       --accent: #d4af37;
       --text: #0f172a;
       --muted: #64748b;
@@ -28,7 +26,6 @@
       padding-bottom: 50px;
     }
 
-    /* HERO HEADER */
     .hero {
       background: linear-gradient(135deg, #090d16 0%, #162238 100%);
       color: #fff;
@@ -65,41 +62,20 @@
       font-weight: 700;
       cursor: pointer;
       font-family: inherit;
-      transition: 0.2s;
     }
 
-    .lang-btn:hover { background: rgba(255, 255, 255, 0.22); }
+    .hero h1 { font-size: 25px; font-weight: 800; max-width: 480px; margin: 0 auto 8px; }
+    .hero p { color: #94a3b8; font-size: 14px; max-width: 420px; margin: 0 auto; }
 
-    .hero h1 {
-      font-size: 26px;
-      font-weight: 800;
-      max-width: 480px;
-      margin: 0 auto 8px;
-    }
-
-    .hero p {
-      color: #94a3b8;
-      font-size: 14px;
-      max-width: 420px;
-      margin: 0 auto;
-    }
-
-    /* MAIN BOOKING CARD */
-    .container {
-      max-width: 540px;
-      margin: -55px auto 0;
-      padding: 0 16px;
-    }
+    .container { max-width: 540px; margin: -55px auto 0; padding: 0 16px; }
 
     .card {
       background: #fff;
       border-radius: 20px;
       padding: 22px;
       box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
-      border: 1px solid rgba(255,255,255,0.8);
     }
 
-    /* SEGMENTED TABS */
     .tabs {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -119,7 +95,6 @@
       color: var(--muted);
       cursor: pointer;
       font-family: inherit;
-      transition: 0.2s;
     }
 
     .tab-btn.active {
@@ -128,7 +103,6 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
-    /* VEHICLE CARDS */
     .section-label {
       font-size: 12px;
       font-weight: 700;
@@ -152,65 +126,39 @@
       padding: 12px 8px;
       text-align: center;
       cursor: pointer;
-      transition: 0.2s;
       background: #fff;
     }
 
-    .v-card:hover { border-color: #cbd5e1; }
-
-    .v-card.selected {
-      border-color: var(--primary);
-      background: #f0fdf4;
-    }
-
+    .v-card.selected { border-color: var(--primary); background: #f0fdf4; }
     .v-icon { font-size: 24px; margin-bottom: 4px; }
     .v-name { font-size: 13px; font-weight: 800; color: var(--text); }
     .v-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
-    /* ROUTE INPUTS + SWAP */
-    .route-box {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-
-    .field label {
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 5px;
-      display: block;
-      color: var(--text);
-    }
+    .route-box { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+    .field label { font-size: 13px; font-weight: 700; margin-bottom: 5px; display: block; color: var(--text); }
 
     select, input {
       width: 100%;
       padding: 13px 14px;
       border: 1.5px solid var(--border);
       border-radius: 12px;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 600;
       font-family: inherit;
-      color: var(--text);
-      background: #f8fafc;
-      transition: 0.2s;
+      color: #0f172a;
+      background-color: #f8fafc;
     }
+
+    select option { color: #0f172a; background: #ffffff; font-weight: 600; }
+    select option:disabled { color: #008751; background: #f1f5f9; font-weight: 800; }
 
     select:focus, input:focus {
       outline: none;
       border-color: var(--primary);
       background: #fff;
-      box-shadow: 0 0 0 3px rgba(0, 135, 81, 0.12);
     }
 
-    .swap-row {
-      display: flex;
-      justify-content: center;
-      margin: -6px 0;
-      z-index: 2;
-    }
-
+    .swap-row { display: flex; justify-content: center; margin: -4px 0; z-index: 2; }
     .swap-btn {
       background: #fff;
       border: 1.5px solid var(--border);
@@ -223,23 +171,11 @@
       align-items: center;
       justify-content: center;
       box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-      transition: 0.2s;
     }
 
-    .swap-btn:hover { background: #f8fafc; transform: rotate(180deg); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+    @media (max-width: 460px) { .grid-2 { grid-template-columns: 1fr; } }
 
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 12px;
-    }
-
-    @media (max-width: 460px) {
-      .grid-2 { grid-template-columns: 1fr; }
-    }
-
-    /* BUTTONS */
     .calc-btn {
       width: 100%;
       padding: 15px;
@@ -252,12 +188,8 @@
       font-weight: 700;
       font-family: inherit;
       cursor: pointer;
-      transition: 0.2s;
     }
 
-    .calc-btn:hover { background: #1e293b; }
-
-    /* FARE TICKET SUMMARY */
     #summary {
       display: none;
       margin-top: 18px;
@@ -276,12 +208,7 @@
       margin-bottom: 12px;
     }
 
-    .fare-price {
-      font-size: 26px;
-      font-weight: 800;
-      color: var(--accent);
-    }
-
+    .fare-price { font-size: 26px; font-weight: 800; color: var(--accent); }
     .fare-sub { font-size: 12px; color: #94a3b8; }
 
     .whatsapp-btn {
@@ -295,16 +222,8 @@
       font-weight: 800;
       font-family: inherit;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: 0.2s;
     }
 
-    .whatsapp-btn:hover { background: #1fb858; }
-
-    /* TRUST FEATURES */
     .features {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -313,13 +232,7 @@
       text-align: center;
     }
 
-    .feat {
-      background: #fff;
-      padding: 14px 8px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-    }
-
+    .feat { background: #fff; padding: 14px 8px; border-radius: 14px; border: 1px solid var(--border); }
     .feat-icon { font-size: 20px; margin-bottom: 4px; }
     .feat-title { font-size: 12px; font-weight: 700; color: var(--text); }
   </style>
@@ -337,17 +250,14 @@
 
   <main class="container">
     <div class="card">
-      <!-- SERVICE TABS -->
       <div class="tabs">
         <button type="button" class="tab-btn active" id="tab-airport" onclick="setTab('airport')">✈️ Airport Transfer</button>
         <button type="button" class="tab-btn" id="tab-city" onclick="setTab('city')">🏙️ City Pick & Drop</button>
       </div>
 
-      <!-- VEHICLE SELECTION CARDS -->
       <span class="section-label" id="t-vehicle">1. Select Vehicle</span>
       <div class="vehicles" id="vehicleCards"></div>
 
-      <!-- ROUTE SELECTION -->
       <span class="section-label" id="t-route">2. Select Route</span>
       <div class="route-box">
         <div class="field">
@@ -365,13 +275,11 @@
         </div>
       </div>
 
-      <!-- FLIGHT NUMBER (AUTO SHOW/HIDE) -->
       <div class="field" id="flight-box" style="margin-bottom: 12px;">
         <label id="t-flight">Flight Number (Optional)</label>
         <input type="text" id="flight" placeholder="e.g., KU 102 / J9 415">
       </div>
 
-      <!-- DATE & PHONE -->
       <div class="grid-2">
         <div class="field">
           <label id="t-time">Date & Time</label>
@@ -385,7 +293,6 @@
 
       <button type="button" class="calc-btn" onclick="calculateFare()" id="t-calc">Calculate Fare</button>
 
-      <!-- RESULT TICKET -->
       <div id="summary">
         <div class="fare-header">
           <div>
@@ -394,3 +301,35 @@
           </div>
           <div style="text-align: end;">
             <div class="fare-sub" id="distDisplay">0 km</div>
+            <div class="fare-sub" id="t-pay">Cash / KNET</div>
+          </div>
+        </div>
+        <button type="button" class="whatsapp-btn" onclick="bookWhatsApp()" id="t-wa">Book Now on WhatsApp</button>
+      </div>
+    </div>
+
+    <div class="features">
+      <div class="feat">
+        <div class="feat-icon">⏱️</div>
+        <div class="feat-title" id="f-1">24/7 On-Time</div>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">💳</div>
+        <div class="feat-title" id="f-2">Cash or KNET</div>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">✈️</div>
+        <div class="feat-title" id="f-3">Flight Tracking</div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // 1. WHATSAPP & AIRPORT FEE SETTINGS
+    const WHATSAPP_NUMBER = "96599999999"; // Replace with your Kuwait WhatsApp number
+    const AIRPORT_FEE = 1.500;             // Extra KWD fee for Airport trips
+
+    // 2. VEHICLES & RATES (IN KWD)
+    const vehicles = [
+      { id: "sedan", icon: "🚗", en: "Sedan", ar: "صالون", metaEn: "4 Pax • 2 Bags", metaAr: "4 ركاب • 2 شنط", base: 1.500, perKm: 0.250 },
+      { id: "suv", icon: "🚙", en: "Family SUV", ar: "جيب عائلي", metaEn: "6 Pax • 4 Bags", metaAr: "6 ركاب • 4 شنط", base: 2.500, perKm: 0.350 },
