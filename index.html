@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kuwait Pick & Drop | توصيل الكويت</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 15px; }
+    .box { max-width: 480px; margin: 15px auto; background: #fff; padding: 22px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    h2 { margin: 0; color: #111; font-size: 20px; }
+    .lang-btn { width: auto; padding: 6px 12px; background: #222; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-size: 13px; margin: 0; }
+    label { font-size: 14px; font-weight: bold; display: block; margin-top: 12px; color: #333; }
+    input, select, button { width: 100%; padding: 11px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 15px; background: #fff; }
+    .calc-btn { background: #007a3d; color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 18px; }
+    .calc-btn:hover { background: #005f2f; }
+    #summary { margin-top: 15px; padding: 14px; background: #eef9f1; border: 1px solid #cce8d4; border-radius: 6px; display: none; line-height: 1.6; }
+    .whatsapp-btn { background: #25D366; color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="top-bar">
+      <h2 id="t-title">Kuwait Transfer Booking</h2>
+      <button class="lang-btn" onclick="toggleLang()" id="langBtn">عربي</button>
+    </div>
+
+    <label id="t-vehicle">Vehicle Type</label>
+    <select id="vehicle"></select>
+
+    <label id="t-pickup">Pickup Area</label>
+    <select id="pickup"></select>
+
+    <label id="t-dropoff">Drop-off Area</label>
+    <select id="dropoff"></select>
+
+    <label id="t-time">Date & Time</label>
+    <input type="datetime-local" id="dateTime" required>
+
+    <label id="t-phone">Your Mobile Number</label>
+    <input type="tel" id="phone" placeholder="e.g., 99001122" required>
+
+    <button class="calc-btn" onclick="calculateFare()" id="t-calc">Calculate Distance & Price</button>
+
+    <div id="summary">
+      <div id="details"></div>
+      <button class="whatsapp-btn" onclick="bookWhatsApp()" id="t-wa">Confirm Booking via WhatsApp</button>
+    </div>
+  </div>
+
+  <script>
+    // 1. WHATSAPP & AIRPORT FEE SETTINGS
+    const WHATSAPP_NUMBER = "96599999999"; // Replace with your Kuwait WhatsApp number
+    const AIRPORT_FEE = 1.500;             // Extra KWD fee for Airport pickups/drop-offs
+
+    // 2. VEHICLE TYPES & RATES (IN KWD)
+    const vehicles = [
+      { id: "sedan", en: "Sedan (1–4 Passengers)", ar: "صالون (1–4 ركاب)", base: 1.500, perKm: 0.250 },
+      { id: "suv", en: "Family SUV (1–6 Passengers)", ar: "جيب عائلي (1–6 ركاب)", base: 2.500, perKm: 0.350 },
+      { id: "van", en: "Van / Minibus (7–12 Passengers)", ar: "فان / باص صغير (7–12 راكب)", base: 4.000, perKm: 0.450 }
+    ];
+
+    // 3. SPECIFIC KUWAIT AREAS BY GOVERNORATE
+    const areaGroups = [
+      {
+        groupEn: "Airports & Borders", groupAr: "المطارات والمنافذ",
+        items: [
+          { id: "kw_t1", en: "Kuwait Airport - Terminal 1 (T1)", ar: "مطار الكويت - مبنى 1", lat: 29.2266, lon: 47.9689, isAirport: true },
+          { id: "kw_t4", en: "Kuwait Airport - Terminal 4 (Kuwait Airways)", ar: "مطار الكويت - مبنى 4", lat: 29.2408, lon: 47.9714, isAirport: true },
+          { id: "kw_t5", en: "Kuwait Airport - Terminal 5 (Jazeera)", ar: "مطار الكويت - مبنى 5", lat: 29.2225, lon: 47.9750, isAirport: true },
+          { id: "abdali", en: "Abdali Border / Farms", ar: "العبدلي", lat: 30.0236, lon: 47.7042 },
+          { id: "nuwaiseeb", en: "Nuwaiseeb Border", ar: "النويصيب", lat: 28.5503, lon: 48.3847 },
+          { id: "salmi", en: "Salmi Border", ar: "السالمي", lat: 29.1153, lon: 46.6978 }
+        ]
+      },
+      {
+        groupEn: "Capital Governorate (Al Asimah)", groupAr: "محافظة العاصمة",
+        items: [
+          { id: "city", en: "Kuwait City / Sharq / Mirqab", ar: "مدينة الكويت / شرق / المرقاب", lat: 29.3759, lon: 47.9774 },
+          { id: "dasman", en: "Dasman / Bneid Al-Gar", ar: "دسمان / بنيد القار", lat: 29.3831, lon: 48.0014 },
+          { id: "daiya", en: "Daiya / Dasma / Mansouriya", ar: "الدعية / الدسمة / المنصورية", lat: 29.3567, lon: 48.0056 },
+          { id: "qadsiya", en: "Qadsiya / Nuzha / Faiha", ar: "القادسية / النزهة / الفيحاء", lat: 29.3519, lon: 47.9814 },
+          { id: "kaifan", en: "Kaifan / Khaldiya / Shamiya", ar: "كيفان / الخالدية / الشامية", lat: 29.3458, lon: 47.9592 },
+          { id: "shuwaikh", en: "Shuwaikh (Industrial / Residential)", ar: "الشويخ", lat: 29.3500, lon: 47.9333 },
+          { id: "sulaibikhat", en: "Sulaibikhat / Doha / Jabir Al-Ahmad", ar: "الصليبيخات / الدوحة / جابر الأحمد", lat: 29.3667, lon: 47.8167 },
+          { id: "qortuba", en: "Qortuba / Surra / Yarmouk", ar: "قرطبة / السرة / اليرموك", lat: 29.3189, lon: 47.9894 }
+        ]
+      },
+      {
+        groupEn: "Hawally Governorate", groupAr: "محافظة حولي",
+        items: [
+          { id: "salmiya", en: "Salmiya", ar: "السالمية", lat: 29.3339, lon: 48.0761 },
+          { id: "hawally", en: "Hawally", ar: "حولي", lat: 29.3328, lon: 48.0286 },
+          { id: "jabriya", en: "Jabriya", ar: "الجابرية", lat: 29.3208, lon: 48.0319 },
+          { id: "shaab", en: "Shaab / Maidan Hawally", ar: "الشعب / ميدان حولي", lat: 29.3414, lon: 48.0469 },
+          { id: "rumaithiya", en: "Rumaithiya / Salwa", ar: "الرميثية / سلوى", lat: 29.3033, lon: 48.0772 },
+          { id: "bayan", en: "Bayan / Mishref / Mubarak Al-Abdullah", ar: "بيان / مشرف / مبارك العبدالله", lat: 29.2936, lon: 48.0558 },
+          { id: "zahra", en: "South Surra (Zahra / Hateen / Salam / Shuhada)", ar: "جنوب السرة (الزهراء / حطين / السلام / الشهداء)", lat: 29.2861, lon: 48.0167 }
+        ]
+      },
+      {
+        groupEn: "Farwaniya Governorate", groupAr: "محافظة الفروانية",
+        items: [
+          { id: "farwaniya", en: "Farwaniya", ar: "الفروانية", lat: 29.2775, lon: 47.9586 },
+          { id: "khaitan", en: "Khaitan", ar: "خيطان", lat: 29.2933, lon: 47.9711 },
+          { id: "rai", en: "Al-Rai (The Avenues)", ar: "الري (الأفنيوز)", lat: 29.3044, lon: 47.9358 },
+          { id: "ardhiya", en: "Ardhiya / Riggae / Andalus", ar: "العارضية / الرقعي / الأندلس", lat: 29.3133, lon: 47.9114 },
+          { id: "jleeb", en: "Jleeb Al-Shuyoukh / Abbasiya", ar: "جليب الشيوخ / العباسية", lat: 29.2667, lon: 47.9333 },
+          { id: "sabah_nasser", en: "Sabah Al-Nasser / Firdous / Rabiya", ar: "صباح الناصر / الفردوس / الرابية", lat: 29.2811, lon: 47.9014 },
+          { id: "abdullah_mubarak", en: "Abdullah Al-Mubarak (West Jleeb)", ar: "عبدالله المبارك", lat: 29.2417, lon: 47.9000 }
+        ]
+      },
+      {
+        groupEn: "Mubarak Al-Kabeer Governorate", groupAr: "محافظة مبارك الكبير",
+        items: [
+          { id: "sabah_salem", en: "Sabah Al-Salem", ar: "صباح السالم", lat: 29.2572, lon: 48.0572 },
+          { id: "messila", en: "Messila / Abu Hasaniya / Abu Fatira", ar: "المسيلة / أبو الحصانية / أبو فطيرة", lat: 29.2250, lon: 48.0833 },
+          { id: "qurain", en: "Qurain / Qusour / Adan", ar: "القرين / القصور / العدان", lat: 29.2106, lon: 48.0667 },
+          { id: "mubarak_kabeer", en: "Mubarak Al-Kabeer / Funaitees", ar: "مبارك الكبير / الفنيطيس", lat: 29.2050, lon: 48.0889 }
+        ]
+      },
+      {
+        groupEn: "Ahmadi Governorate", groupAr: "محافظة الأحمدي",
+        items: [
+          { id: "fintas", en: "Fintas / Eqaila / Jaber Al-Ali", ar: "الفنطاس / العقيلة / جابر العلي", lat: 29.1739, lon: 48.1211 },
+          { id: "mahboula", en: "Mahboula", ar: "المهبولة", lat: 29.1450, lon: 48.1303 },
+          { id: "abu_halifa", en: "Abu Halifa / Mangaf", ar: "أبو حليفة / المنقف", lat: 29.1150, lon: 48.1314 },
+          { id: "fahaheel", en: "Fahaheel", ar: "الفحيحيل", lat: 29.0825, lon: 48.1303 },
+          { id: "ahmadi", en: "Ahmadi / Sabahiya / Riqqa", ar: "الأحمدي / الصباحية / الرقة", lat: 29.0769, lon: 48.0839 },
+          { id: "ali_sabah", en: "Ali Sabah Al-Salem (Umm Al-Hayman)", ar: "علي صباح السالم (أم الهيمان)", lat: 28.9583, lon: 48.1583 },
+          { id: "wafra", en: "Wafra / Sabah Al-Ahmad City", ar: "الوفرة / مدينة صباح الأحمد", lat: 28.6333, lon: 48.0667 },
+          { id: "khiran", en: "Khiran / Zour", ar: "الخيران / الزور", lat: 28.6650, lon: 48.3711 }
+        ]
+      },
+      {
+        groupEn: "Jahra Governorate", groupAr: "محافظة الجهراء",
+        items: [
+          { id: "jahra", en: "Jahra City / Qasr / Naeem", ar: "الجهراء / القصر / النعيم", lat: 29.3375, lon: 47.6581 },
+          { id: "saad_abdullah", en: "Saad Al-Abdullah / Taima / Waha", ar: "سعد العبدالله / تيماء / الواحة", lat: 29.3167, lon: 47.6833 },
+          { id: "sulaibiya", en: "Sulaibiya / Amghara / Kabd", ar: "الصليبية / أمغرة / كبد", lat: 29.2833, lon: 47.8167 },
+          { id: "mutlaa", en: "Al-Mutlaa City", ar: "مدينة المطلاع", lat: 29.4667, lon: 47.6333 }
+        ]
+      }
+    ];
+
+    // 4. TRANSLATIONS
+    const text = {
+      en: {
+        title: "Kuwait Transfer Booking", btn: "عربي", vehicle: "Vehicle Type",
+        pickup: "Pickup Area", dropoff: "Drop-off Area", time: "Date & Time",
+        phone: "Your Mobile Number", calc: "Calculate Distance & Price",
+        wa: "Confirm Booking via WhatsApp", dist: "Distance", fare: "Estimated Fare",
+        payNote: "KWD (Cash / KNET on arrival)", sameErr: "Pickup and Drop-off areas cannot be the same.",
+        fillErr: "Please select date/time and enter your mobile number."
+      },
+      ar: {
+        title: "حجز توصيل في الكويت", btn: "English", vehicle: "نوع السيارة",
+        pickup: "منطقة الانطلاق", dropoff: "منطقة الوصول", time: "التاريخ والوقت",
+        phone: "رقم الهاتف النقال", calc: "احسب المسافة والسعر",
